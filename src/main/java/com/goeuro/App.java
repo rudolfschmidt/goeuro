@@ -20,7 +20,7 @@ public class App {
 	private static final String ARR_SID = "arr_sid";
 	private static final String DIRECT_BUS_ROUTE = "direct_bus_route";
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
 		if (args.length < 1) {
 			throw new IllegalArgumentException(NO_PATH_MESSAGE);
