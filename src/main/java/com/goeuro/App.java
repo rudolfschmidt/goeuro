@@ -41,8 +41,8 @@ public class App {
 					boolean directExists = Files.lines(filePath)
 							// skip number of bus routes
 							.skip(1)
-							.anyMatch(fileLine -> {
-								List<String> stationIds = Stream.of(fileLine.split("\\s"))
+							.anyMatch(line -> {
+								List<String> stationIds = Stream.of(line.split("\\s"))
 										// skip route id
 										.skip(1)
 										.collect(Collectors.toList());
