@@ -1,5 +1,8 @@
 package com.goeuro;
 
+/**
+ * Contains Application Constants
+ */
 public interface Consts {
 
 	int PORT = 8088;
