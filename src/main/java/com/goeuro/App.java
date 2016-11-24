@@ -32,7 +32,7 @@ public class App {
 				.route(Consts.ROUTE)
 
 				// define the handler and the route method
-				.get(new BusRoute(filePath));
+				.get(new BusRoute(filePath, new DirectionService()));
 
 		// start and let http server listen to port
 		app.listen(Consts.PORT);

@@ -5,12 +5,7 @@ import com.rudolfschmidt.alkun.Response;
 import com.rudolfschmidt.alkun.Route;
 
 import javax.json.Json;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The Bus Route
@@ -21,14 +16,20 @@ public class BusRoute implements Route {
 	 * The path to the bus file
 	 */
 	private final Path filePath;
+	/**
+	 * Direction Service
+	 */
+	private final DirectionService directionService;
 
 	/**
 	 * Creates a Bus Route
 	 *
-	 * @param filePath the path to the bus file
+	 * @param filePath         the path to the bus file
+	 * @param directionService
 	 */
-	public BusRoute(Path filePath) {
+	public BusRoute(Path filePath, DirectionService directionService) {
 		this.filePath = filePath;
+		this.directionService = directionService;
 	}
 
 	@Override
@@ -40,7 +41,7 @@ public class BusRoute implements Route {
 		String arrivalId = request.queries(Consts.ARR_SID).orElseThrow(IllegalArgumentException::new);
 
 		// if a bus connection exists
-		boolean directExists = isDirectionConnection(departureId, arrivalId);
+		boolean directExists = directionService.isDirectionConnection(filePath, departureId, arrivalId);
 
 		// the sever response
 		String jsonResponse = getServerResponse(departureId, arrivalId, directExists);
@@ -52,8 +53,8 @@ public class BusRoute implements Route {
 	/**
 	 * Create the server response
 	 *
-	 * @param departureId the departure station id
-	 * @param arrivalId the arrival station id
+	 * @param departureId  the departure station id
+	 * @param arrivalId    the arrival station id
 	 * @param directExists if a bus connection exists
 	 * @return the json string that the server response
 	 */
@@ -66,24 +67,4 @@ public class BusRoute implements Route {
 				.toString();
 	}
 
-	/**
-	 * @param departureId the departure station id
-	 * @param arrivalId the arrival station id
-	 * @return if a connection exists, true will be returned, otherwise false
-	 * @throws IOException if can not read file from system
-	 */
-	private boolean isDirectionConnection(String departureId, String arrivalId) throws IOException {
-		return Files.lines(filePath)
-				// skip number of bus routes
-				.skip(1)
-				.anyMatch(line -> {
-					List<String> stationIds = Stream.of(line.split("\\s"))
-							// skip route id
-							.skip(1)
-							.collect(Collectors.toList());
-					int dep_sid_index = stationIds.indexOf(departureId);
-					int arr_sid_index = stationIds.indexOf(arrivalId);
-					return dep_sid_index > -1 && arr_sid_index > -1 && dep_sid_index < arr_sid_index;
-				});
-	}
 }
